@@ -1,0 +1,29 @@
+name: Generate QR Code
+
+on:
+  push:
+    branches: [ "main" ]  # Замените "main" на вашу основную ветку, если она называется иначе
+  workflow_dispatch:      # Эта строчка позволит запускать workflow вручную из интерфейса GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate QR Code
+        id: qr
+        uses: snow-actions/qrcode@v1.2.0
+        with:
+          # Замените текст ниже на то, что должно быть в QR-коде.
+          # Это может быть ссылка на ваш репозиторий, страницу документации и т.д.
+          text: 'https://github.com/ВАШ_ПОЛЬЗОВАТЕЛЬ/НАЗВАНИЕ_РЕПОЗИТОРИЯ'
+
+      - name: Commit and push QR code
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add qrcode.png
+          git diff --staged --quiet || git commit -m "Add generated QR code"
+          git push
